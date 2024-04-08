@@ -56,17 +56,32 @@ module.exports = {
             let user =  await User.findOne({_id: userId})
             if(user && Object.keys(user).length > 0){
                 let product = await Product.findOne({_id: productId})
+
                 if(product && Object.keys(product).length > 0){
                     // if productId is already present
+                    if(product.maxQuantity == 0){
+                        return res.status(400).json({success: false, message: "Product is out of stock"})
+                    }
+                   
                     let productIndex = user.cart.findIndex(item => item.productId.toString() === productId.toString())
                     if(productIndex > -1){
-                        user.cart[productIndex].quantity += quantity;
-                        await user.save();
-                        res.status(200).json({success: true, message: "Product updated in cart successfully!"})
+                        if(product.maxQuantity >=  user.cart[productIndex].quantity + quantity){
+
+                            user.cart[productIndex].quantity += quantity;
+                            await user.save();
+                            res.status(200).json({success: true, message: "Product updated in cart successfully!"})
+                        }else{
+                            res.status(400).json({success: false, message: "You can't add more than " + product.maxQuantity + " " + product.title + " to cart!"})
+                        }
                     }else{
-                        user.cart.push({productId:productId,quantity:quantity})
-                        await user.save();
-                        res.status(200).json({success: true, message: "Product added to cart successfully!"})
+                        if(product.maxQuantity >= quantity){
+                            user.cart.push({productId:productId,quantity:quantity})
+                            await user.save();
+                            res.status(200).json({success: true, message: "Product added to cart successfully!"})
+                        }else{
+                            res.status(400).json({success: false, message: "You can't add more than " + product.maxQuantity + " " + product.title + " to cart!"})
+                        }
+                        
                     }   
                 }else{
                     res.status(404).json({success: false, message: "Product Not Found!"})
@@ -107,8 +122,8 @@ module.exports = {
                 user.cart.forEach(async (item)=>{
                     let product = await Product.findOne({_id: item.productId})
                     if(product && Object.keys(product).length > 0){
-                        // product.quantity -= item.quantity;
-                        // await product.save();
+                        product.maxQuantity -= item.quantity;
+                        await product.save();
 
                         let order = new Order({
                             productId: product._id,

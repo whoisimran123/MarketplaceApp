@@ -7,6 +7,7 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   oldPrice: { type: Number, required: true },
   imageUrl: { type: String, required: true },
+  maxQuantity: { type: Number, required: true},
   sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   timestamp: { type: Date, default: Date.now }
 });

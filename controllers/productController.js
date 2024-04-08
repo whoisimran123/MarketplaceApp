@@ -17,7 +17,7 @@ module.exports = {
                     let product = await newProduct.save();
                     res.status(200).json({ success: true, message: "Product created successfully" })
                 } catch (error) {
-                    res.status(500).json({ success: false, message: err.message })
+                    res.status(500).json({ success: false, message: error.message })
                 }
 
             } else {
@@ -74,7 +74,7 @@ module.exports = {
                     let product = await Product.findByIdAndUpdate(productId,body,{new:true});
                     res.status(200).json({ success: true, message: "Product updated successfully" })
                 } catch (error) {
-                    res.status(500).json({ success: false, message: err.message })
+                    res.status(500).json({ success: false, message: error.message })
                 }
 
             } else {

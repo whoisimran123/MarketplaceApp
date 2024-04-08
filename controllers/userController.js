@@ -12,7 +12,7 @@ module.exports ={
             res.status(200).send({success:true,message: 'User created successfully', userData});
             
         } catch (error) {
-            res.status(500).json({success:false,message: err.message});
+            res.status(500).json({success:false,message: error.message});
         }
         
     },
@@ -31,7 +31,7 @@ module.exports ={
                 res.status(401).send({success:false,message: 'Invalid email'});
             }
         } catch (error) {
-            res.status(500).json({success:false,message: err.message});
+            res.status(500).json({success:false,message: error.message});
         }
     }
 }
